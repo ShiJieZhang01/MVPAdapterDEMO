@@ -43,9 +43,7 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
     boolean monitoringConnectivity;
 
     LinearLayoutManager mLinearLayoutManager;
-
     private ConnectivityManager.NetworkCallback connectivityCallback;
-
 
     ZhihuPresenterImpl zhihuPresenter;
     @InjectView(R.id.recycle_zhihu)
@@ -222,6 +220,7 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
         connected = activeNetworkInfo != null && activeNetworkInfo.isConnected();
         if (!connected) {
             progress.setVisibility(View.INVISIBLE);
+
             if (noConnectionText == null) {
 
                 ViewStub stub_text = (ViewStub) view.findViewById(R.id.stub_no_connection_text);
