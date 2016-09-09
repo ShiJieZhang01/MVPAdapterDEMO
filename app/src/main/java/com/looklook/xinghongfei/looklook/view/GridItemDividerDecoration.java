@@ -30,6 +30,7 @@ import android.view.View;
 /**
  * A {@link RecyclerView.ItemDecoration} which draws dividers (along the right & bottom)
  * for certain {@link RecyclerView.ViewHolder} types.
+ * 此类用于RecyclerView的分割线
  */
 public class GridItemDividerDecoration extends RecyclerView.ItemDecoration {
 

@@ -96,7 +96,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private void bindViewHolderNormal(final ZhihuViewHolder holder, final int position) {
 
         final ZhihuDailyItem zhihuDailyItem = zhihuDailyItems.get(holder.getAdapterPosition());
-
+        //判断是否被点击过，若是，则显示为灰色
         if (DBUtils.getDB(mContext).isRead(Config.ZHIHU, zhihuDailyItem.getId(), 1))
             holder.textView.setTextColor(Color.GRAY);
         else
@@ -118,7 +118,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     }
                 });
 
-
+        //使用Glide加载图片
         Glide.with(mContext)
                 .load(zhihuDailyItems.get(position).getImages()[0])
                 .listener(new RequestListener<String, GlideDrawable>() {
@@ -129,6 +129,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                     @Override
                     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                       //实现自定义动画
                         if (!zhihuDailyItem.hasFadedIn) {
                             holder.imageView.setHasTransientState(true);
                             final ObservableColorMatrix cm = new ObservableColorMatrix();
@@ -149,7 +150,6 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                                     holder.imageView.setHasTransientState(false);
                                     animator.start();
                                     zhihuDailyItem.hasFadedIn = true;
-
                                 }
                             });
                         }
@@ -171,11 +171,6 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         intent.putExtra("id", zhihuDailyItem.getId());
         intent.putExtra("title", zhihuDailyItem.getTitle());
         intent.putExtra("image",mImageUrl);
-//                final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
-//                        ((Activity) mContext, false,new android.support.v4.util.Pair<>(holder.imageView, mContext.getString(R.string.transition_shot)),
-//                                new android.support.v4.util.Pair<>(holder.linearLayout, mContext.getString(R.string.transition_shot_background)));
-//                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
-//                mContext.startActivity(intent, options.toBundle());
         mContext.startActivity(intent);
 
     }

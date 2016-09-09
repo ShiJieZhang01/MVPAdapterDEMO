@@ -43,8 +43,7 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
     boolean monitoringConnectivity;
 
     LinearLayoutManager mLinearLayoutManager;
-    RecyclerView.OnScrollListener loadingMoreListener;
-
+    private ConnectivityManager.NetworkCallback connectivityCallback;
 
     ZhihuPresenterImpl zhihuPresenter;
     @InjectView(R.id.recycle_zhihu)
@@ -60,10 +59,8 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
 
         setRetainInstance(true);
         View view = inflater.inflate(R.layout.zhihu_fragment_layout, container, false);
-        checkConnectivity(view);
         ButterKnife.inject(this, view);
         return view;
-
     }
 
 
@@ -74,7 +71,7 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
 
         initialDate();
         initialView();
-
+        checkConnectivity(view);
     }
 
     @Override
@@ -94,7 +91,6 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
     public void onDestroy() {
         super.onDestroy();
         zhihuPresenter.unsubcrible();
-
     }
 
 
@@ -105,56 +101,28 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
 
     private void initialView() {
 
-        initialListener();
-
         if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
             mLinearLayoutManager = new WrapContentLinearLayoutManager(getContext());
 
         }else {
             mLinearLayoutManager=new LinearLayoutManager(getContext());
         }
+        //设置布局管理器，从而控制是网格，线型还是瀑布流的方式展示数据
         recycle.setLayoutManager(mLinearLayoutManager);
+        //设置item的高度不变，增删tem时无需重复计算造成资源浪费
         recycle.setHasFixedSize(true);
+        //添加分割线
         recycle.addItemDecoration(new GridItemDividerDecoration(getContext(), R.dimen.divider_height, R.color.divider));
-        // TODO: 16/8/13 add  animation
+        //设置Item增加和删除的动画
         recycle.setItemAnimator(new DefaultItemAnimator());
+        //设置adapter
         recycle.setAdapter(zhihuAdapter);
-        recycle.addOnScrollListener(loadingMoreListener);
-//      recycle.addOnScrollListener(tooldimissListener);
-        if (connected) {
-            loadDate();
-        }
-
-
-    }
-
-    private void loadDate() {
-        if (zhihuAdapter.getItemCount() > 0) {
-            zhihuAdapter.clearData();
-        }
-        currentLoadDate = "0";
-        zhihuPresenter.getLastZhihuNews();
-
-    }
-
-    private void loadMoreDate() {
-        zhihuAdapter.loadingStart();
-        zhihuPresenter.getTheDaily(currentLoadDate);
-    }
-
-
-    private void initialListener() {
-
-        loadingMoreListener = new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
+        //上滑自动加载更多内容
+        recycle.addOnScrollListener(new RecyclerView.OnScrollListener(){
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
                 if (dy > 0) //向下滚动
                 {
                     int visibleItemCount = mLinearLayoutManager.getChildCount();
@@ -167,33 +135,29 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
                     }
                 }
             }
-        };
-
-
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-            connectivityCallback = new ConnectivityManager.NetworkCallback() {
-                @Override
-                public void onAvailable(Network network) {
-                    connected = true;
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            noConnectionText.setVisibility(View.GONE);
-                            loadDate();
-                        }
-                    });
-                }
-
-                @Override
-                public void onLost(Network network) {
-                    connected = false;
-                }
-            };
-
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
+        if (connected) {
+            loadDate();
         }
-
-
     }
+
+    private void loadDate() {
+        if (zhihuAdapter.getItemCount() > 0) {
+            zhihuAdapter.clearData();
+        }
+        currentLoadDate = "0";
+        zhihuPresenter.getLastZhihuNews();
+    }
+
+    private void loadMoreDate() {
+        zhihuAdapter.loadingStart();
+        zhihuPresenter.getTheDaily(currentLoadDate);
+    }
+
 
 
     @Override
@@ -262,12 +226,28 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
                 ViewStub stub_text = (ViewStub) view.findViewById(R.id.stub_no_connection_text);
                 noConnectionText = (TextView) stub_text.inflate();
             }
-
-//            final AnimatedVectorDrawable avd =
-//                    (AnimatedVectorDrawable) getContext().getDrawable(R.drawable.avd_no_connection);
-//            noConnection.setImageDrawable(avd);
-//            avd.start();
             if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+
+                //监听网络，当从断网情况下重新连接至网络时，会自动刷新
+                    connectivityCallback = new ConnectivityManager.NetworkCallback() {
+                        @Override
+                        public void onAvailable(Network network) {
+                            connected = true;
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    noConnectionText.setVisibility(View.GONE);
+                                    loadDate();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onLost(Network network) {
+                            connected = false;
+                        }
+                    };
+
                 connectivityManager.registerNetworkCallback(
                         new NetworkRequest.Builder()
                                 .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).build(),
@@ -275,15 +255,6 @@ public class ZhihuFragment extends BaseFragment implements IZhihuFragment {
 
                 monitoringConnectivity = true;
             }
-
         }
-
     }
-
-
-
-
-        private ConnectivityManager.NetworkCallback connectivityCallback;
-
-
 }

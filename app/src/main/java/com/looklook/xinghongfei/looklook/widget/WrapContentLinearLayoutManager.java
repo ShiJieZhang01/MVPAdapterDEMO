@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 
 /**
  * Created by xinghongfei on 16/8/16.
+ * 布局管理器，和LinearLayoutManager一样没啥区别
  */
 public class WrapContentLinearLayoutManager extends LinearLayoutManager {
     public WrapContentLinearLayoutManager(Context context) {

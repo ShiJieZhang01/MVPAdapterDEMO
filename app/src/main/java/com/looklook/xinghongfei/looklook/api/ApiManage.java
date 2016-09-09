@@ -19,6 +19,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class ApiManage {
 
+    //拦截器可以用来转换，重试，重写请求的机制
+    //Application Interceptors  应用拦截器主要用于查看请求信息及返回信息，如链接地址、头信息、参数信息等
+    //Network Interceptors  可以添加、删除或替换请求头信息，还可以改变的请求携带的实体
     private static final Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
         @Override
         public Response intercept(Chain chain) throws IOException {
@@ -44,6 +47,7 @@ public class ApiManage {
     private static File httpCacheDirectory = new File(MyApplication.getContext().getCacheDir(), "zhihuCache");
     private static int cacheSize = 10 * 1024 * 1024; // 10 MiB
     private static Cache cache = new Cache(httpCacheDirectory, cacheSize);
+    //设置缓存空间及大小，设置拦截器
     private static OkHttpClient client = new OkHttpClient.Builder()
             .addNetworkInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR)
             .addInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR)
@@ -51,6 +55,7 @@ public class ApiManage {
             .build();
     public ZhihuApi zhihuApi;
     public TopNews topNews;
+    public GankApi ganK;
     private Object zhihuMonitor = new Object();
 
     public static ApiManage getInstence() {
@@ -91,15 +96,13 @@ public class ApiManage {
                             .client(client)
                             .addConverterFactory(GsonConverterFactory.create())
                             .build().create(TopNews.class);
-
                 }
             }
         }
-
         return topNews;
     }
 
-    public GankApi ganK;
+
     public GankApi getGankService(){
         if (ganK==null){
             synchronized (zhihuMonitor){
@@ -110,14 +113,8 @@ public class ApiManage {
                             .client(client)
                             .addConverterFactory(GsonConverterFactory.create())
                             .build().create(GankApi.class);
-
-
                 }
-
-
             }
-
-
         }
         return ganK;
     }

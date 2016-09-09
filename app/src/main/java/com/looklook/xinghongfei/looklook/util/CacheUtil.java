@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+//缓存处理使用工具类提供了对String,JSONObject,JSONArray,byte,序列化,drawable数据的读写，本质是使用ACacheManager来进行处理
 public class CacheUtil {
 
     private CacheUtil() {
