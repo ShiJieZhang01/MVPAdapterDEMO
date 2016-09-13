@@ -7,4 +7,10 @@
 /build
 /captures
 .idea/tasks.xml
+<<<<<<< HEAD
 .idea
+=======
+/.idea/
+.idea
+/.idea/misc.xml
+>>>>>>> xinghongfei/master
