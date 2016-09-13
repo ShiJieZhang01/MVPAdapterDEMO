@@ -35,6 +35,8 @@ public class ZhihuPresenterImpl extends BasePresenterImpl implements IZhihuPrese
     @Override
     public void getLastZhihuNews() {
         mZhihuFragment.showProgressDialog();
+        //retrofit和RxAndroid结合，通过retrofit下载数据，然后通过Gson转换为Zhihudaily和ZhihuDialyItem，
+        // 在map中对ZhihuDaily进行处理，然后交由onNext进行下一步的操作
         Subscription subscription = ApiManage.getInstence().getZhihuApiService().getLastDaily()
                 .map(new Func1<ZhihuDaily, ZhihuDaily>() {
                     @Override

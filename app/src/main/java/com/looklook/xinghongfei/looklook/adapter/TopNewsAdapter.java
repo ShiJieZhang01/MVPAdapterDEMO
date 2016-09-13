@@ -115,7 +115,7 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DBUtils.getDB(mContext).insertHasRead(Config.ZHIHU, newsBeanItem.getTitle(), 1);
+                DBUtils.getDB(mContext).insertHasRead(Config.TOPNEWS, newsBeanItem.getTitle(), 1);
                 holder.textView.setTextColor(Color.GRAY);
                 holder.sourceTextview.setTextColor(Color.GRAY);
                 startTopnewsActivity( newsBeanItem, holder );

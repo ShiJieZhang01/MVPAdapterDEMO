@@ -52,7 +52,7 @@ public class MeiziPresenterImpl extends BasePresenterImpl implements IMeiziPrese
                     @Override
                     public void onNext(MeiziData meiziData) {
                         mMeiziFragment.hidProgressDialog();
-                        mCacheUtil.put(Config.ZHIHU, gson.toJson(meiziData));
+                        mCacheUtil.put(Config.MEIZI, gson.toJson(meiziData));
                         mMeiziFragment.updateMeiziData(meiziData.getResults());
                     }
                 });
