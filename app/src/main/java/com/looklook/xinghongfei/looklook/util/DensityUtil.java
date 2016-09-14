@@ -10,7 +10,7 @@ import android.view.Display;
 import android.view.WindowManager;
 
 /**
- * liujingyuan
+ * 获取屏幕尺寸，还有dp和px相互转化的工具类
  */
 public class DensityUtil {
 

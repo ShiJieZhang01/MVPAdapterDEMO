@@ -29,6 +29,7 @@ import java.util.ArrayList;
 
 /**
  * Utility methods for working with animations.
+ * 动画效果相关的工具类
  */
 public class AnimUtils {
 

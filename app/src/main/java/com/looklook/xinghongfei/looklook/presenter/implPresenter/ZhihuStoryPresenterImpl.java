@@ -47,33 +47,4 @@ public class ZhihuStoryPresenterImpl extends BasePresenterImpl implements IZhihu
                 });
         addSubscription(s);
     }
-
-    @Override
-    public void getGuokrArticle(String id) {
-
-    }
-
-//    @Override
-//    public void getGuokrArticle(String id) {
-//        Subscription s = ApiManage.getInstence().getZhihuApiService().getGuokrArticle(id)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Observer<GuokrArticle>() {
-//                    @Override
-//                    public void onCompleted() {
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        mIZhihuStory.showError(e.getMessage());
-//                    }
-//
-//                    @Override
-//                    public void onNext(GuokrArticle guokrArticle) {
-//                        mIZhihuStory.showGuokrArticle(guokrArticle);
-//                    }
-//                });
-//        addSubscription(s);
-//    }
 }

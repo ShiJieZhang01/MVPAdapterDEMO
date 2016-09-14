@@ -33,7 +33,9 @@ import com.looklook.xinghongfei.looklook.util.ViewUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-
+//实现界面在最开始向下滑和最后面向下滑后界面悬浮，松手后退出的效果，
+//同样实现的代码可以看https://github.com/Commit451/ElasticDragDismissLayout
+//此代码最初来自于https://github.com/nickbutcher/plaid，可以作为参考
 public class ElasticDragDismissFrameLayout extends FrameLayout {
 
     // configurable attribs

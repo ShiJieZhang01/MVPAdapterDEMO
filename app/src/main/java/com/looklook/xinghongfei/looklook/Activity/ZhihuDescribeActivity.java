@@ -7,7 +7,6 @@ import android.animation.ValueAnimator;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -91,7 +90,6 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
     private String url;
     private IZhihuStoryPresenter mIZhihuStoryPresenter;
     private ElasticDragDismissFrameLayout.SystemChromeFader chromeFader;
-    private Handler mHandler=new Handler();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,7 +106,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         getData();
 
         chromeFader = new ElasticDragDismissFrameLayout.SystemChromeFader(this);
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
             getWindow().getSharedElementReturnTransition().addListener(zhihuReturnHomeListener);
             getWindow().setSharedElementEnterTransition(new ChangeBounds());
@@ -129,7 +127,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                                 .alpha(0f)
                                 .setDuration(100)
                                 .setInterpolator(new AccelerateInterpolator());
-                        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             mShot.setElevation(1f);
                             mToolbar.setElevation(0f);
                         }
@@ -142,7 +140,8 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         scrollListener = new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                if (oldScrollY<168){
+                //webview在起始位置向上滑动，标题和背景图片也会向上滑动一段距离，然后保持不动，webview 继续上滑会覆盖它们，去掉此段代码，背景图片和标题保持不动被Webview覆盖
+                if (oldScrollY < 168) {
                     mShot.setOffset(-oldScrollY);
                     mTranslateYTextView.setOffset(-oldScrollY);
                 }
@@ -157,32 +156,34 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         mImageUrl = getIntent().getStringExtra("image");
         mIZhihuStoryPresenter = new ZhihuStoryPresenterImpl(this);
         mNest.setOnScrollChangeListener(scrollListener);
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //调用postponeEnterTransition() 方法来暂时阻止启动共享元素 Transition。之后，
+            // 在共享元素准备好后调用 startPostponedEnterTransition 来恢复过渡效果
             postponeEnterTransition();
             mShot.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
                     mShot.getViewTreeObserver().removeOnPreDrawListener(this);
-                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         startPostponedEnterTransition();
                     }
                     return true;
                 }
             });
         }
-
-
     }
 
     private void initView() {
-        mToolbar.setTitleMargin(20,20,0,10);
+        mToolbar.setTitleMargin(20, 20, 0, 10);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        //点击toolbar，界面滑到初始位置
         mToolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mNest.smoothScrollTo(0,0);
+                mNest.smoothScrollTo(0, 0);
             }
         });
+        //点击后退箭头退出
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -190,7 +191,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
             }
         });
         mTranslateYTextView.setText(title);
-
+        //webview设置
         WebSettings settings = wvZhihu.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
@@ -240,7 +241,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 
     @Override
     protected void onDestroy() {
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
             getWindow().getSharedElementReturnTransition().removeListener(zhihuReturnHomeListener);
         }
@@ -285,26 +286,24 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 
     @Override
     public void showZhihuStory(ZhihuStory zhihuStory) {
-
-            Glide.with(this)
-                    .load(zhihuStory.getImage()).centerCrop()
-                    .listener(loadListener).override(width,heigh)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .into(mShot);
+        //加载图片
+        Glide.with(this)
+                .load(zhihuStory.getImage()).centerCrop()
+                .listener(loadListener).override(width, heigh)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(mShot);
         url = zhihuStory.getShareUrl();
-        isEmpty=TextUtils.isEmpty(zhihuStory.getBody());
-        mBody=zhihuStory.getBody();
-        scc=zhihuStory.getCss();
-        if (isEmpty) {
+        isEmpty = TextUtils.isEmpty(zhihuStory.getBody());
+        mBody = zhihuStory.getBody();
+        scc = zhihuStory.getCss();
+        //获取不到内容的话，则显示固定内容,Config.isNight用来决定是否采用夜间模式
+       if (isEmpty) {
             wvZhihu.loadUrl(url);
         } else {
-            String data = WebUtil.buildHtmlWithCss(mBody, scc, Config.isNight);
-            wvZhihu.loadDataWithBaseURL(WebUtil.BASE_URL, data, WebUtil.MIME_TYPE, WebUtil.ENCODING, WebUtil.FAIL_URL);
+           String data = WebUtil.buildHtmlWithCss(mBody, scc, Config.isNight);
+           wvZhihu.loadDataWithBaseURL(WebUtil.BASE_URL, data, WebUtil.MIME_TYPE, WebUtil.ENCODING, WebUtil.FAIL_URL);
         }
-
-
     }
-
 
 
     private void expandImageAndFinish() {
@@ -317,18 +316,18 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                 @Override
                 public void onAnimationEnd(Animator animation) {
 
-                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         finishAfterTransition();
-                    }else {
+                    } else {
                         finish();
                     }
                 }
             });
             expandImage.start();
         } else {
-            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAfterTransition();
-            }else {
+            } else {
                 finish();
             }
         }
@@ -342,6 +341,8 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
             final Bitmap bitmap = GlideUtils.getBitmap(resource);
             final int twentyFourDip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                     24, ZhihuDescribeActivity.this.getResources().getDisplayMetrics());
+
+            //通过加载图片的颜色，动态调整状态栏的背景颜色和文字颜色
             Palette.from(bitmap)
                     .maximumColorCount(3)
                     .clearFilters() /* by default palette ignore certain hues
@@ -361,7 +362,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 
                             // color the status bar. Set a complementary dark color on L,
                             // light or dark color on M (with matching status bar icons)
-                            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
 
                                 int statusBarColor = getWindow().getStatusBarColor();
@@ -395,7 +396,6 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                                     statusBarColorAnim.start();
                                 }
                             }
-
                         }
                     });
 
@@ -408,7 +408,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 
                             // slightly more opaque ripple on the pinned image to compensate
                             // for the scrim
-                            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
                                 mShot.setForeground(ViewUtils.createRipple(palette, 0.3f, 0.6f,
                                         ContextCompat.getColor(ZhihuDescribeActivity.this, R.color.mid_grey),
@@ -431,9 +431,9 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
 
     private void enterAnimation() {
         float offSet = mToolbar.getHeight();
-        LinearInterpolator interpolator=new LinearInterpolator();
+        LinearInterpolator interpolator = new LinearInterpolator();
         viewEnterAnimation(mShot, offSet, interpolator);
-        viewEnterAnimationNest(mNest,0f,interpolator);
+        viewEnterAnimationNest(mNest, 0f, interpolator);
 
     }
 
@@ -448,6 +448,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                 .setListener(null)
                 .start();
     }
+
     private void viewEnterAnimationNest(View view, float offset, Interpolator interp) {
         view.setTranslationY(-offset);
         view.setAlpha(0.3f);
