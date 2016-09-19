@@ -22,6 +22,7 @@ public class ApiManage {
     //拦截器可以用来转换，重试，重写请求的机制
     //Application Interceptors  应用拦截器主要用于查看请求信息及返回信息，如链接地址、头信息、参数信息等
     //Network Interceptors  可以添加、删除或替换请求头信息，还可以改变的请求携带的实体
+    //此拦截器的目的就是设置缓存
     private static final Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
         @Override
         public Response intercept(Chain chain) throws IOException {
@@ -48,6 +49,8 @@ public class ApiManage {
     private static int cacheSize = 10 * 1024 * 1024; // 10 MiB
     private static Cache cache = new Cache(httpCacheDirectory, cacheSize);
     //设置缓存空间及大小，设置拦截器
+    //缓存实现原理可以参考http://werb.github.io/2016/07/29/%E4%BD%BF%E7%94%A8Retrofit2+OkHttp3%E5%AE%9E%E7%8E%B0%E7%BC%93%E5%AD%98%E5%A4%84%E7%90%86/
+    //以及http://www.tuicool.com/articles/u6ZvyeI
     private static OkHttpClient client = new OkHttpClient.Builder()
             .addNetworkInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR)
             .addInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR)

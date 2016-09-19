@@ -140,7 +140,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         scrollListener = new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                //webview在起始位置向上滑动，标题和背景图片也会向上滑动一段距离，然后保持不动，webview 继续上滑会覆盖它们，去掉此段代码，背景图片和标题保持不动被Webview覆盖
+                //NestedScrollView在起始位置向上滑动，标题和背景图片也会向上滑动一段距离，然后保持不动，NestedScrollView 继续上滑会覆盖它们，去掉此段代码，背景图片和标题保持不动被NestedScrollView覆盖
                 if (oldScrollY < 168) {
                     mShot.setOffset(-oldScrollY);
                     mTranslateYTextView.setOffset(-oldScrollY);
@@ -297,15 +297,15 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         mBody = zhihuStory.getBody();
         scc = zhihuStory.getCss();
         //获取不到内容的话，则显示固定内容,Config.isNight用来决定是否采用夜间模式
-       if (isEmpty) {
+        if (isEmpty) {
             wvZhihu.loadUrl(url);
         } else {
-           String data = WebUtil.buildHtmlWithCss(mBody, scc, Config.isNight);
-           wvZhihu.loadDataWithBaseURL(WebUtil.BASE_URL, data, WebUtil.MIME_TYPE, WebUtil.ENCODING, WebUtil.FAIL_URL);
+            String data = WebUtil.buildHtmlWithCss(mBody, scc, Config.isNight);
+            wvZhihu.loadDataWithBaseURL(WebUtil.BASE_URL, data, WebUtil.MIME_TYPE, WebUtil.ENCODING, WebUtil.FAIL_URL);
         }
     }
 
-
+    //退出的动画效果
     private void expandImageAndFinish() {
         if (mShot.getOffset() != 0f) {
             Animator expandImage = ObjectAnimator.ofFloat(mShot, ParallaxScrimageView.OFFSET,
@@ -376,6 +376,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
                                     if (!isDark && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                         ViewUtils.setLightStatusBar(mShot);
                                     }
+
                                 }
 
                                 if (statusBarColor != getWindow().getStatusBarColor()) {
@@ -429,6 +430,7 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         }
     };
 
+    //进入的动画效果，图片和文字出现的过渡时间和透明度
     private void enterAnimation() {
         float offSet = mToolbar.getHeight();
         LinearInterpolator interpolator = new LinearInterpolator();
