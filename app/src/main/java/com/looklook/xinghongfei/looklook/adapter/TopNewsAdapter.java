@@ -93,20 +93,18 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private void bindLoadingViewHold(LoadingMoreHolder holder, int position) {
-        holder.progressBar.setVisibility(showLoadingMore? View.VISIBLE : View.INVISIBLE);
+        holder.progressBar.setVisibility(showLoadingMore ? View.VISIBLE : View.INVISIBLE);
     }
 
     private void bindViewHolderNormal(final TopNewsViewHolder holder, final int position) {
 
         final NewsBean newsBeanItem = topNewitems.get(holder.getAdapterPosition());
-
-        if (DBUtils.getDB(mContext).isRead(Config.TOPNEWS, newsBeanItem.getTitle(), 1)){
+        //判断是否被点击过，假如是则显示灰色
+        if (DBUtils.getDB(mContext).isRead(Config.TOPNEWS, newsBeanItem.getTitle(), 1)) {
 
             holder.textView.setTextColor(Color.GRAY);
             holder.sourceTextview.setTextColor(Color.GRAY);
-        }
-
-        else {
+        } else {
             holder.textView.setTextColor(Color.BLACK);
             holder.sourceTextview.setTextColor(Color.BLACK);
         }
@@ -115,10 +113,7 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DBUtils.getDB(mContext).insertHasRead(Config.TOPNEWS, newsBeanItem.getTitle(), 1);
-                holder.textView.setTextColor(Color.GRAY);
-                holder.sourceTextview.setTextColor(Color.GRAY);
-                startTopnewsActivity( newsBeanItem, holder );
+                startTopnewsActivity(newsBeanItem, holder);
 
             }
         });
@@ -128,11 +123,11 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        startTopnewsActivity( newsBeanItem, holder );
+                        startTopnewsActivity(newsBeanItem, holder);
                     }
                 });
 
-
+        //glide加载图片
         Glide.with(mContext)
                 .load(newsBeanItem.getImgsrc())
                 .listener(new RequestListener<String, GlideDrawable>() {
@@ -176,19 +171,27 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
 
     }
-    private void startTopnewsActivity(NewsBean newsBeanItem,RecyclerView.ViewHolder holder){
 
-            Intent intent = new Intent(mContext, TopNewsDescribeActivity.class);
-            intent.putExtra("docid", newsBeanItem.getDocid());
-            intent.putExtra("title", newsBeanItem.getTitle());
-            intent.putExtra("image", newsBeanItem.getImgsrc());
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+    private void startTopnewsActivity(NewsBean newsBeanItem, TopNewsViewHolder holder) {
+
+        //点击item会变灰色，表示已读
+        DBUtils.getDB(mContext).insertHasRead(Config.TOPNEWS, newsBeanItem.getTitle(), 1);
+        holder.textView.setTextColor(Color.GRAY);
+        holder.sourceTextview.setTextColor(Color.GRAY);
+
+        Intent intent = new Intent(mContext, TopNewsDescribeActivity.class);
+        intent.putExtra("docid", newsBeanItem.getDocid());
+        intent.putExtra("title", newsBeanItem.getTitle());
+        intent.putExtra("image", newsBeanItem.getImgsrc());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //共享元素之间的跳转，详细可参考http://blog.csdn.net/baidu_25464429/article/details/48024109
+            //和http://blog.csdn.net/ljx19900116/article/details/41806889
             final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
-                    ((Activity) mContext, false,new android.support.v4.util.Pair<>(((TopNewsViewHolder)holder).imageView, mContext.getString(R.string.transition_topnew)),
-                            new android.support.v4.util.Pair<>(((TopNewsViewHolder)holder).linearLayout, mContext.getString(R.string.transition_topnew_linear)));
+                    ((Activity) mContext, false, new android.support.v4.util.Pair<>(((TopNewsViewHolder) holder).imageView, mContext.getString(R.string.transition_topnew)),
+                            new android.support.v4.util.Pair<>(((TopNewsViewHolder) holder).linearLayout, mContext.getString(R.string.transition_topnew_linear)));
             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
             mContext.startActivity(intent, options.toBundle());
-        }else {
+        } else {
 
             mContext.startActivity(intent);
 
@@ -203,8 +206,8 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
 
     public void addItems(ArrayList<NewsBean> list) {
-//
-////        remove first unuse data
+
+        // 移除第一个数据，因为此数据不符合我们的条件
         list.remove(0);
         int n = list.size();
         topNewitems.addAll(list);
@@ -261,7 +264,7 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    class TopNewsViewHolder extends RecyclerView.ViewHolder {
+   static class TopNewsViewHolder extends RecyclerView.ViewHolder {
         final TextView textView;
         final LinearLayout linearLayout;
         final TextView sourceTextview;
@@ -272,7 +275,7 @@ public class TopNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             imageView = (BadgedFourThreeImageView) itemView.findViewById(R.id.item_image_id);
             textView = (TextView) itemView.findViewById(R.id.item_text_id);
             linearLayout = (LinearLayout) itemView.findViewById(R.id.zhihu_item_layout);
-            sourceTextview= (TextView) itemView.findViewById(R.id.item_text_source_id);
+            sourceTextview = (TextView) itemView.findViewById(R.id.item_text_source_id);
         }
     }
 

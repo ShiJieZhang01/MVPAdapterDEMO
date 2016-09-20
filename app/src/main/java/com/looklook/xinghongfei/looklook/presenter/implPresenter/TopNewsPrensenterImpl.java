@@ -19,6 +19,8 @@ public class TopNewsPrensenterImpl extends BasePresenterImpl implements INewTopP
     public TopNewsPrensenterImpl(ITopNewsFragment iTopNewsFragment){
         mITopNewsFragment=iTopNewsFragment;
     }
+
+    //RxAndroid 和retrofit结合获取数据，转化为NewsList，然后进行处理
     @Override
     public void getNewsList(int t) {
         mITopNewsFragment.showProgressDialog();

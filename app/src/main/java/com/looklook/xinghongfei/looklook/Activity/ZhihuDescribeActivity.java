@@ -106,6 +106,8 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         getData();
 
         chromeFader = new ElasticDragDismissFrameLayout.SystemChromeFader(this);
+
+        //设置activity的进入动画和退出动画
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
             getWindow().getSharedElementReturnTransition().addListener(zhihuReturnHomeListener);
@@ -113,7 +115,6 @@ public class ZhihuDescribeActivity extends BaseActivity implements IZhihuStory {
         }
 
         enterAnimation();
-
     }
 
     private void initlistenr() {

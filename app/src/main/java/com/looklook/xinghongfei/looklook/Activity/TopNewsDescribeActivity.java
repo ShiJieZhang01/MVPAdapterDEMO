@@ -88,12 +88,15 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
         mDeviceInfo = DensityUtil.getDeviceInfo(this);
         width = mDeviceInfo[0];
         heigh = width * 3 / 4;
+        initListener();
         initData();
         initView();
         getData();
         enterAnimation();
 
         chromeFader = new ElasticDragDismissFrameLayout.SystemChromeFader(this);
+
+        //设置activity的进入动画和退出动画，结合TopNewsAdapter中的startTopnewsActivity方法，并对控件设置属性
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().getSharedElementReturnTransition().addListener(mReturnHomeListener);
             getWindow().getSharedElementEnterTransition().addListener(mEnterTrasitionListener);
@@ -101,12 +104,8 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
 
     }
 
-
-    private void initData() {
-        id = getIntent().getStringExtra("docid");
-        title = getIntent().getStringExtra("title");
-        mTextView.setText(title);
-        mImageUrl = getIntent().getStringExtra("image");
+    private void initListener() {
+//向上滑动监听，图片和标题会向上移动一段距离后被覆盖
         scrollListener = new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
@@ -116,6 +115,62 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                 }
             }
         };
+        //退出监听
+        mReturnHomeListener =
+                new AnimUtils.TransitionListenerAdapter() {
+                    @Override
+                    public void onTransitionStart(Transition transition) {
+                        super.onTransitionStart(transition);
+                        // hide the fab as for some reason it jumps position??  TODO work out why
+                        mToolbar.animate()
+                                .alpha(0f)
+                                .setDuration(100)
+                                .setInterpolator(new AccelerateInterpolator());
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            mShot.setElevation(1f);
+                            mToolbar.setElevation(0f);
+                        }
+                        mNest.animate()
+                                .alpha(0f)
+                                .setDuration(50)
+                                .setInterpolator(new AccelerateInterpolator());
+                    }
+                };
+        //进入监听
+        mEnterTrasitionListener =
+                new AnimUtils.TransitionListenerAdapter() {
+                    @Override
+                    public void onTransitionEnd(Transition transition) {
+                        super.onTransitionEnd(transition);
+                        //解决5.0 shara element bug
+                        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 100).setDuration(100);
+                        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                            @Override
+                            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                                //mShot.setOffset((Integer) valueAnimator.getAnimatedValue() * 10);
+                                mNest.smoothScrollTo((Integer) valueAnimator.getAnimatedValue() / 10, 0);
+
+                            }
+                        });
+                        valueAnimator.start();
+                        //mShot.setAlpha(0.5f);
+                        //mShot.animate().alpha(1f).setDuration(800L).start();
+                    }
+
+                    @Override
+                    public void onTransitionResume(Transition transition) {
+                        super.onTransitionResume(transition);
+
+                    }
+                };
+    }
+
+    private void initData() {
+        id = getIntent().getStringExtra("docid");
+        title = getIntent().getStringExtra("title");
+        mTextView.setText(title);
+        mImageUrl = getIntent().getStringExtra("image");
+
         Glide.with(this)
                 .load(mImageUrl)
                 .override(width, heigh)
@@ -127,6 +182,9 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
 
         mTopNewsDesPresenter = new TopNewsDesPresenterImpl(this);
         mNest.setOnScrollChangeListener(scrollListener);
+
+        //调用postponeEnterTransition() 方法来暂时阻止启动共享元素 Transition。之后，
+        // 在共享元素准备好后调用 startPostponedEnterTransition 来恢复过渡效果
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             postponeEnterTransition();
             mShot.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -138,64 +196,20 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                 }
             });
         }
-        mReturnHomeListener =
-                new AnimUtils.TransitionListenerAdapter() {
-                    @Override
-                    public void onTransitionStart(Transition transition) {
-                        super.onTransitionStart(transition);
-                        // hide the fab as for some reason it jumps position??  TODO work out why
-                        mToolbar.animate()
-                                .alpha(0f)
-                                .setDuration(100)
-                                .setInterpolator(new AccelerateInterpolator());
-                        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-                            mShot.setElevation(1f);
-                            mToolbar.setElevation(0f);
-                        }
-                        mNest.animate()
-                                .alpha(0f)
-                                .setDuration(50)
-                                .setInterpolator(new AccelerateInterpolator());
-                    }
-                };
-        mEnterTrasitionListener =
-                new AnimUtils.TransitionListenerAdapter() {
-                    @Override
-                    public void onTransitionEnd(Transition transition) {
-                        super.onTransitionEnd(transition);
-//                    解决5.0 shara element bug
-                        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 100).setDuration(100);
-                        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                            @Override
-                            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-//                            mShot.setOffset((Integer) valueAnimator.getAnimatedValue() * 10);
-                                mNest.smoothScrollTo((Integer) valueAnimator.getAnimatedValue() / 10, 0);
-
-                            }
-                        });
-                        valueAnimator.start();
-//                    mShot.setAlpha(0.5f);
-//                    mShot.animate().alpha(1f).setDuration(800L).start();
-                    }
-                    @Override
-                    public void onTransitionResume(Transition transition) {
-                        super.onTransitionResume(transition);
-
-                    }
-                };
-
 
     }
 
     private void initView() {
         mNest.setAlpha(0.5f);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        //点击toolbar滑到最上面
         mToolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mNest.smoothScrollTo(0, 0);
             }
         });
+        //点击左箭头退出
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -269,7 +283,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                                 }
                             }
 
-                            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
                                 if (statusBarColor != getWindow().getStatusBarColor()) {
                                     mShot.setScrimColor(statusBarColor);
@@ -300,7 +314,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
 
                             // slightly more opaque ripple on the pinned image to compensate
                             // for the scrim
-                            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                 mShot.setForeground(ViewUtils.createRipple(palette, 0.3f, 0.6f,
                                         ContextCompat.getColor(TopNewsDescribeActivity.this, R.color.mid_grey),
                                         true));
@@ -376,15 +390,16 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                     } else {
                         finish();
                     }
-                }});
-                expandImage.start();
-            }else{
-            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+                }
+            });
+            expandImage.start();
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAfterTransition();
-            }else {
+            } else {
                 finish();
             }
-            }
+        }
 
 
     }

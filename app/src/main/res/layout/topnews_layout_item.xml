@@ -51,7 +51,6 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="20dp"
             android:stateListAnimator="@animator/raise"
-            android:text="helooeddd"
             android:textColor="@color/text_source"
             android:textSize="10sp"/>
     </LinearLayout>

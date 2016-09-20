@@ -231,7 +231,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    public static class LoadingMoreHolder extends RecyclerView.ViewHolder {
+    static class LoadingMoreHolder extends RecyclerView.ViewHolder {
         ProgressBar progressBar;
 
         public LoadingMoreHolder(View itemView) {
@@ -240,7 +240,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    class ZhihuViewHolder extends RecyclerView.ViewHolder {
+   static class ZhihuViewHolder extends RecyclerView.ViewHolder {
         final TextView textView;
         final LinearLayout linearLayout;
         BadgedFourThreeImageView imageView;

@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * Created by xinghongfei on 16/8/16.
+ * 用于activity之间共享元素的跳转的工具类
  */
 public class Help {
     public static Pair<View, String>[] createSafeTransitionParticipants(@NonNull Activity activity,

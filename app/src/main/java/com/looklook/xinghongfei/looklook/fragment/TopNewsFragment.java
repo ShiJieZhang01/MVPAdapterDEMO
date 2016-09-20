@@ -45,7 +45,6 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
     ProgressBar progress;
 
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -66,8 +65,8 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
 
     private void initialDate() {
 
-        mTopNewsPrensenter=new TopNewsPrensenterImpl(this);
-        mTopNewsAdapter =new TopNewsAdapter(getContext());
+        mTopNewsPrensenter = new TopNewsPrensenterImpl(this);
+        mTopNewsAdapter = new TopNewsAdapter(getContext());
     }
 
     private void initialView() {
@@ -97,9 +96,10 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
 
     }
 
+    //加载更多内容，每次加载20条新闻
     private void loadMoreDate() {
         mTopNewsAdapter.loadingStart();
-        currentIndex+=20;
+        currentIndex += 20;
         mTopNewsPrensenter.getNewsList(currentIndex);
     }
 
@@ -121,7 +121,7 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
                     int visibleItemCount = mLinearLayoutManager.getChildCount();
                     int totalItemCount = mLinearLayoutManager.getItemCount();
                     int pastVisiblesItems = mLinearLayoutManager.findFirstVisibleItemPosition();
-
+                    //滑到底部，加载更多内容
                     if (!loading && (visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                         loading = true;
                         loadMoreDate();
@@ -134,14 +134,14 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
 
     @Override
     public void upListItem(NewsList newsList) {
-        loading=false;
+        loading = false;
         progress.setVisibility(View.INVISIBLE);
         mTopNewsAdapter.addItems(newsList.getNewsList());
     }
 
     @Override
     public void showProgressDialog() {
-        if (currentIndex ==0){
+        if (currentIndex == 0) {
             progress.setVisibility(View.VISIBLE);
         }
 
