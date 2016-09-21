@@ -18,28 +18,29 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/background"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/background"
     >
 
 
     <ImageView
+        android:id="@+id/shot"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:transitionName="@string/meizi"
-        android:id="@+id/shot"/>
+        android:transitionName="@string/meizi"/>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
+        style="@style/Widget.Look.HomeToolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:actionBarSize"
-        android:outlineProvider="none"
-        android:elevation="1dp"
-        android:scrollbarDefaultDelayBeforeFade="1"
         android:background="#3b000000"
-        android:title="@string/app_name"
-        style="@style/Widget.Look.HomeToolbar" />
+        android:elevation="1dp"
+        android:outlineProvider="none"
+        android:scrollbarDefaultDelayBeforeFade="1"
+        app:title="@string/meizi"/>
 
 </RelativeLayout>

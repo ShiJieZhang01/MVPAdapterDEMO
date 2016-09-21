@@ -50,7 +50,7 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public MeiziAdapter(Context context) {
 
         this.mContext = context;
-        decsi=DensityUtil.getDeviceInfo(mContext);
+        decsi = DensityUtil.getDeviceInfo(mContext);
 
     }
 
@@ -87,7 +87,7 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private void bindLoadingViewHold(LoadingMoreHolder holder, int position) {
-        holder.progressBar.setVisibility(showLoadingMore? View.VISIBLE : View.INVISIBLE);
+        holder.progressBar.setVisibility(showLoadingMore ? View.VISIBLE : View.INVISIBLE);
     }
 
     private void bindViewHolderNormal(final MeiziViewHolder holder, final int position) {
@@ -97,17 +97,10 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startDescribeActivity(meizi,holder);
+                startDescribeActivity(meizi, holder);
             }
         });
-//        holder.textView.setText("视频");
 
-//        holder.textView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                startDescribeActivity(meizi,holder);
-//            }
-//        });
         Glide.with(mContext)
                 .load(meizi.getUrl())
                 .listener(new RequestListener<String, GlideDrawable>() {
@@ -152,17 +145,17 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     }
 
-    private void startDescribeActivity(Meizi meizi,RecyclerView.ViewHolder holder){
+    private void startDescribeActivity(Meizi meizi, RecyclerView.ViewHolder holder) {
 
         Intent intent = new Intent(mContext, MeiziPhotoDescribeActivity.class);
-        intent.putExtra("image",meizi.getUrl());
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-
+        intent.putExtra("image", meizi.getUrl());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //共享元素跳转的动画效果
             final android.support.v4.util.Pair<View, String>[] pairs = Help.createSafeTransitionParticipants
-                    ((Activity) mContext, false,new android.support.v4.util.Pair<>(((MeiziViewHolder)holder).imageView, mContext.getString(R.string.meizi)));
+                    ((Activity) mContext, false, new android.support.v4.util.Pair<>(((MeiziViewHolder) holder).imageView, mContext.getString(R.string.meizi)));
             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, pairs);
             mContext.startActivity(intent, options.toBundle());
-        }else {
+        } else {
             mContext.startActivity(intent);
         }
 
@@ -190,7 +183,6 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private int getDataItemCount() {
-
         return meiziItemes.size();
     }
 
@@ -215,7 +207,7 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
 
-    public void addVedioDes(ArrayList<Gank> list){
+    public void addVedioDes(ArrayList<Gank> list) {
 
     }
 
@@ -234,15 +226,11 @@ public class MeiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     class MeiziViewHolder extends RecyclerView.ViewHolder {
-//        final TextView textView;
-
         BadgedFourThreeImageView imageView;
 
         MeiziViewHolder(View itemView) {
             super(itemView);
             imageView = (BadgedFourThreeImageView) itemView.findViewById(R.id.item_image_id);
-//            textView = (TextView) itemView.findViewById(R.id.item_text_id);
-
         }
     }
 

@@ -20,12 +20,14 @@ public class TopNewsDesPresenterImpl extends BasePresenterImpl implements INewTo
             throw new IllegalArgumentException(" must not be null");
         mITopNewsFragment = topNewsFragment;
     }
+
     private String getDetailUrl(String docId) {
         StringBuffer sb = new StringBuffer(Urls.NEW_DETAIL);
         sb.append(docId).append(Urls.END_DETAIL_URL);
         return sb.toString();
     }
 
+    //通过okhttp加载页面，使用OkHttpUtils对OKHttp进行封装，通过回调处理数据后在主线程中展示数据
     @Override
     public void getDescrible(final String docid) {
         mITopNewsFragment.showProgressDialog();
@@ -34,7 +36,7 @@ public class TopNewsDesPresenterImpl extends BasePresenterImpl implements INewTo
             @Override
             public void onSuccess(String response) {
                 NewsDetailBean newsDetailBean = NewsJsonUtils.readJsonNewsDetailBeans(response, docid);
-               mITopNewsFragment.upListItem(newsDetailBean);
+                mITopNewsFragment.upListItem(newsDetailBean);
             }
 
             @Override

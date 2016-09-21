@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 
 /**
  * Created by drakeet on 8/16/15.
+ * 用来记录消息是否是第一次出现，假如是则弹出，假如不是，则不弹出
  */
 public class Once {
 

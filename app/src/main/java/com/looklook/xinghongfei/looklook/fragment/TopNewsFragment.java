@@ -58,6 +58,7 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        initialListener();
         initialDate();
         initialView();
 
@@ -71,7 +72,7 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
 
     private void initialView() {
 
-        initialListener();
+
         mLinearLayoutManager = new WrapContentLinearLayoutManager(getContext());
         recycle.setLayoutManager(mLinearLayoutManager);
         recycle.setHasFixedSize(true);
@@ -79,12 +80,11 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
         // TODO: 16/8/13 add  animation
         recycle.setItemAnimator(new DefaultItemAnimator());
         recycle.setAdapter(mTopNewsAdapter);
+        //滑动监听
         recycle.addOnScrollListener(loadingMoreListener);
         if (connected) {
             loadDate();
         }
-
-
     }
 
     private void loadDate() {

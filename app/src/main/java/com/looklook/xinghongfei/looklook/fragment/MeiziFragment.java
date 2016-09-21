@@ -43,7 +43,7 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
 
     private boolean loading;
 
-    private int index=1;
+    private int index = 1;
 
 
     @Nullable
@@ -57,29 +57,30 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
+        intialListener();
         intialDate();
-
         initialView();
 
         super.onViewCreated(view, savedInstanceState);
     }
 
     private void intialDate() {
-        mMeiziPresenter=new MeiziPresenterImpl(getContext(), this);
-
+        mMeiziPresenter = new MeiziPresenterImpl(getContext(), this);
+        meiziAdapter = new MeiziAdapter(getContext());
     }
 
     private void initialView() {
-        meiziAdapter = new MeiziAdapter(getContext());
+
         linearLayoutManager = new WrapContentLinearLayoutManager(getContext());
-        intialListener();
+
         mRecycleMeizi.setLayoutManager(linearLayoutManager);
         mRecycleMeizi.setAdapter(meiziAdapter);
         mRecycleMeizi.addOnScrollListener(loadmoreListener);
+        //提示，在第一次使用app时才出现
         new Once(getContext()).show("tip_guide_6", new Once.OnceCallback() {
             @Override
             public void onOnce() {
-                Snackbar.make(mRecycleMeizi, getString(R.string.meizitips), Snackbar.LENGTH_INDEFINITE)
+                Snackbar.make(mRecycleMeizi, getString(R.string.meizitips), Snackbar.LENGTH_LONG)
                         .setAction(R.string.meiziaction, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -93,6 +94,7 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
         loadDate();
 
     }
+
     private void loadDate() {
         if (meiziAdapter.getItemCount() > 0) {
             meiziAdapter.clearData();
@@ -107,7 +109,7 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
     }
 
     private void intialListener() {
-
+        //监听界面滚动
         loadmoreListener = new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -125,7 +127,7 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
 
                     if (!loading && (visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                         loading = true;
-                        index+=1;
+                        index += 1;
                         loadMoreDate();
                     }
                 }
@@ -150,7 +152,7 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
     @Override
     public void updateMeiziData(ArrayList<Meizi> list) {
         meiziAdapter.loadingfinish();
-        loading=false;
+        loading = false;
         meiziAdapter.addItems(list);
         mMeiziPresenter.getVedioData(index);
     }
@@ -163,12 +165,12 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
 
     @Override
     public void showProgressDialog() {
-                mPrograss.setVisibility(View.VISIBLE);
+        mPrograss.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hidProgressDialog() {
-            mPrograss.setVisibility(View.INVISIBLE);
+        mPrograss.setVisibility(View.INVISIBLE);
     }
 
     @Override

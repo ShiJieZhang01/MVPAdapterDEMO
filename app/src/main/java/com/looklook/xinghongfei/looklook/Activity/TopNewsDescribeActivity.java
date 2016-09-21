@@ -105,7 +105,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     }
 
     private void initListener() {
-//向上滑动监听，图片和标题会向上移动一段距离后被覆盖
+        //滑动监听，图片和标题会向上移动一段距离后被覆盖
         scrollListener = new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
@@ -234,6 +234,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
 
     @Override
     protected void onDestroy() {
+        //移除对共享元素进入和退出的监听
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().getSharedElementReturnTransition().removeListener(mReturnHomeListener);
             getWindow().getSharedElementEnterTransition().removeListener(mEnterTrasitionListener);
@@ -252,6 +253,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
             final Bitmap bitmap = GlideUtils.getBitmap(resource);
             final int twentyFourDip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                     24, TopNewsDescribeActivity.this.getResources().getDisplayMetrics());
+            //根据图片内容，动态调整状态栏背景颜色和字体颜色
             Palette.from(bitmap)
                     .maximumColorCount(3)
                     .clearFilters() /* by default palette ignore certain hues
@@ -279,12 +281,13 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
                                         isDark, SCRIM_ADJUSTMENT);
                                 // set a light status bar on M+
                                 if (!isDark && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    //设置状态栏字体颜色
                                     ViewUtils.setLightStatusBar(mShot);
                                 }
                             }
 
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
+                                //设置状态栏背景颜色
                                 if (statusBarColor != getWindow().getStatusBarColor()) {
                                     mShot.setScrimColor(statusBarColor);
                                     ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(
@@ -362,7 +365,6 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
     @Override
     public void hidProgressDialog() {
         mProgress.setVisibility(View.INVISIBLE);
-
     }
 
     @Override
@@ -375,6 +377,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
         }).show();
     }
 
+    //退出动画
     private void expandImageAndFinish() {
 
         if (mShot.getOffset() != 0f) {
@@ -411,7 +414,7 @@ public class TopNewsDescribeActivity extends BaseActivity implements ITopNewsDes
 
     }
 
-
+    //进入动画
     private void enterAnimation() {
         float offSet = mToolbar.getHeight();
         LinearInterpolator interpolator = new LinearInterpolator();
