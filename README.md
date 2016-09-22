@@ -1,6 +1,6 @@
 # LookLook 
 
-This is a reading news app. you can read Zhihu Daily， News and some pictures.User experience is amasing.The project is updating, welcome Star and Fork.
+此app用来看知乎日报，网易新闻和每日看看，很好的展示了MVP架构，使用了RxAndroid和retrofit，逻辑清晰，是很好的练手小项目。我在原有的基础上添加了大量的注释，删除了一些冗余的代码和文件，修改了很多Bug，但是里面还有一些工具类和View还没有了解其具体功能，以后可能会继续添加
 
 
 
@@ -15,16 +15,6 @@ This is a reading news app. you can read Zhihu Daily， News and some pictures.U
 
 
 
-
-
-
-
-
-
-
-##About me
-
-An android developer in Beijing.Welcome to offer me an [Interview invitation](mailto:maat.xing@gmail.com). If you have any new idea about this project, feel free to [contact me](mailto:maat.xing@gmail.com). :smiley:
 
 
 
