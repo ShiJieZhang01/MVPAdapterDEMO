@@ -82,6 +82,7 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
     }
 
     void setupPhotoAttacher() {
+        //点击隐藏或者显示状态栏
         mPhotoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
             @Override
             public void onViewTap(View view, float x, float y) {
@@ -89,6 +90,7 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
             }
         });
 
+        //长按提示
         mPhotoViewAttacher.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -114,6 +116,7 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
 
     }
 
+    //保存图片
     private void saveImage() {
         File externalStorageDirectory = Environment.getExternalStorageDirectory();
         File directory = new File(externalStorageDirectory, "LookLook");
@@ -162,7 +165,7 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
                 .listener(loadListener)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(mShot);
-
+        //ImageView的拓展，支持放大等手势
         mPhotoViewAttacher = new PhotoViewAttacher(mShot);
 
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
@@ -193,8 +196,6 @@ public class MeiziPhotoDescribeActivity extends BaseActivity {
                 .start();
         mIsHidden = !mIsHidden;
     }
-
-    ;
 
     private void initListener() {
 

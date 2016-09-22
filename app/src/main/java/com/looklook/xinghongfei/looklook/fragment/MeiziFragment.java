@@ -157,6 +157,7 @@ public class MeiziFragment extends BaseFragment implements IMeiziFragment {
         mMeiziPresenter.getVedioData(index);
     }
 
+    //此数据并未使用
     @Override
     public void updateVedioData(ArrayList<Gank> list) {
         meiziAdapter.addVedioDes(list);
