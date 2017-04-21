@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
     LinearLayoutManager mLinearLayoutManager;
     RecyclerView.OnScrollListener loadingMoreListener;
 
+    private static final String TAG = "zsj";
     int currentIndex;
 
     TopNewsPrensenterImpl mTopNewsPrensenter;
@@ -136,6 +138,7 @@ public class TopNewsFragment extends BaseFragment implements ITopNewsFragment {
     public void upListItem(NewsList newsList) {
         loading = false;
         progress.setVisibility(View.INVISIBLE);
+        Log.d(TAG, "upListItem: "+newsList.getNewsList().size());
         mTopNewsAdapter.addItems(newsList.getNewsList());
     }
 
